@@ -28,12 +28,14 @@ namespace Storage {
     }
     load();
 
-    export const save = debounce(function _save(get: Getter) {
+    export const saveDebounced = debounce(function _save(get: Getter) {
         let newStore: Store = {
             open1: get(section1_OpenAtom),
         };
         localStorage.setItem(KEY, JSON.stringify(newStore));
     }, 1000);
+
+    export const save = ({ get }: { get: Getter; }) => Storage.saveDebounced(get);
 }
 
 //#endregion LocalStorage
@@ -89,4 +91,4 @@ const correlateAtom = atom(
 
 // UI state
 
-export const section1_OpenAtom = atomWithCallback<boolean>(Storage.initialData.open1, ({ get }) => Storage.save(get));
+export const section1_OpenAtom = atomWithCallback<boolean>(Storage.initialData.open1, Storage.save);
